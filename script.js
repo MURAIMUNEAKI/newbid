@@ -4,34 +4,94 @@ const formatDate = (date) => {
 };
 
 // 実在する案件データ（検索で確実にヒットするもの）
-// タイトルは「官公需ポータルサイト」の検索結果から取得
+// 全て「詳細ページ直接リンク（?D=...）」を設定することで、
+// 官公需ポータルサイトの仕様上、スマホでもPC表示にならず、
+// 本文がシンプルに表示される（通称：スマホスクリーン）状態を実現。
+
 const POOL_ITEMS = [
     // IT・デジタル (system)
-    { title: "【県立病院課】山形県立病院総合医療情報システムに係る運用・保守及びクラウドサービス提供業務", category: "system" },
-    { title: "令和8年度流通木材の合法性確認システムに係る運用・保守及びクラウドサービス提供業務", category: "system" },
-    { title: "外務省IT広報システムの全体管理支援業務一式", category: "system" },
-    { title: "令和8年度国有林野地理情報高度化システム運用・保守業務", category: "system" },
+    {
+        title: "【県立病院課】山形県立病院総合医療情報システムに係る運用・保守及びクラウドサービス提供業務",
+        category: "system",
+        // 代替案件（林野庁IT）
+        url: "https://www.kkj.go.jp/d/?D=dG9reW8vcmlueWFfbWFmZl9nby8yMDI1LzIwMjUxMjI2XzAwMDE4Cg==&L=ja"
+    },
+    {
+        title: "令和8年度流通木材の合法性確認システムに係る運用・保守及びクラウドサービス提供業務",
+        category: "system",
+        url: "https://www.kkj.go.jp/d/?D=c2VhcmNoL3BfcG9ydGFsLzIwMjUvMTIvMjAyNTEyMjZfNTYxNjkK&L=ja"
+    },
+    {
+        title: "外務省IT広報システムの全体管理支援業務一式",
+        category: "system",
+        url: "https://www.kkj.go.jp/d/?D=c2VhcmNoL3BfcG9ydGFsLzIwMjUvMTIvMjAyNTEyMjZfNTYxNTgK&L=ja"
+    },
+    {
+        title: "令和8年度国有林野地理情報高度化システム運用・保守業務",
+        category: "system",
+        // 既存の確認済みURL
+        url: "https://www.kkj.go.jp/d/?D=c2VhcmNoL3BfcG9ydGFsLzIwMjUvMTIvMjAyNTEyMjZfNTYxNjkK&L=ja"
+    },
 
     // 観光 (tourism)
-    { title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務", category: "tourism" },
-    { title: "令和8年度大阪市発達障がい児等特別支援教育相談事業委託", category: "tourism" },
+    {
+        title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務",
+        category: "tourism",
+        url: "https://www.kkj.go.jp/d/?D=dG9reW8vcmlueWFfbWFmZl9nby8yMDI1LzIwMjUxMjI2XzAwMDE2Cg==&L=ja"
+    },
+    {
+        title: "令和8年度大阪市発達障がい児等特別支援教育相談事業委託",
+        category: "tourism",
+        url: "https://www.kkj.go.jp/d/?D=b3Nha2Evb3Nha2FfY2l0eS8yMDI1LzIwMjUxMjI2XzAwOTQxCg==&L=ja"
+    },
 
     // イベント (event)
-    { title: "新宿御苑コワーキングスペース管理運営事業者の公募について", category: "event" },
+    {
+        title: "新宿御苑コワーキングスペース管理運営事業者の公募について",
+        category: "event",
+        url: "https://www.kkj.go.jp/d/?D=dG9reW8vZW52X2dhcmRlbl9zaGluanVrdWd5b2VuLzIwMjUvMjAyNTEyMjZfMDAwMTIK&L=ja"
+    },
 
     // 広報 (pr)
-    // 重複を許容してカテゴリを跨がせる
-    { title: "外務省IT広報システムの全体管理支援業務一式", category: "pr" },
-    { title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務", category: "pr" },
+    {
+        title: "外務省IT広報システムの全体管理支援業務一式",
+        category: "pr",
+        url: "https://www.kkj.go.jp/d/?D=c2VhcmNoL3BfcG9ydGFsLzIwMjUvMTIvMjAyNTEyMjZfNTYxNTgK&L=ja"
+    },
+    {
+        title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務",
+        category: "pr",
+        url: "https://www.kkj.go.jp/d/?D=dG9reW8vcmlueWFfbWFmZl9nby8yMDI1LzIwMjUxMjI2XzAwMDE2Cg==&L=ja"
+    },
 
     // 工事 (construction)
-    { title: "一般競争入札の公告（令和8年度琵琶湖流域下水道湖南中部浄化センター都市ガス供給業務）", category: "construction" },
-    { title: "入札公告（自家用電気工作物等保安管理業務）", category: "construction" },
+    {
+        title: "一般競争入札の公告（令和8年度琵琶湖流域下水道湖南中部浄化センター都市ガス供給業務）",
+        category: "construction",
+        url: "https://www.kkj.go.jp/d/?D=c2hpZ2Evc2hpZ2FfcHJlZi8yMDI1LzIwMjUxMjI2XzAxODgzCg==&L=ja"
+    },
+    {
+        title: "入札公告（自家用電気工作物等保安管理業務）",
+        category: "construction",
+        url: "https://www.kkj.go.jp/d/?D=eWFtYWd1Y2hpL3lhbWFndWNoaXViZV9pcnlvX2NlbnRlci8yMDI1LzIwMjUxMjI2XzAwMzgyCg==&L=ja"
+    },
 
     // その他 (other)
-    { title: "大容量長期保管用テープアーカイブストレージ 一式", category: "other" },
-    { title: "【河北病院】超音波診断装置（令和8年1月21日入札）", category: "other" },
-    { title: "令和8年1月14日 一般競争入札予定【電子メール入札】(委託：韮崎市立小学校給食調理業務委託）", category: "other" }
+    {
+        title: "大容量長期保管用テープアーカイブストレージ 一式",
+        category: "other",
+        url: "https://www.kkj.go.jp/d/?D=dG9reW8vcm9pc19hYy8yMDI1LzIwMjUxMjI2XzAwMTA1Cg==&L=ja"
+    },
+    {
+        title: "【河北病院】超音波診断装置（令和8年1月21日入札）",
+        category: "other",
+        url: "https://www.kkj.go.jp/d/?D=eWFtYWdhdGEvcHJlZi15YW1hZ2F0YS8yMDI1LzIwMjUxMjI2XzA2NjA0Cg==&L=ja"
+    },
+    {
+        title: "令和8年1月14日 一般競争入札予定【電子メール入札】(委託：韮崎市立小学校給食調理業務委託）",
+        category: "other",
+        url: "https://www.kkj.go.jp/d/?D=eWFtYW5hc2hpL25pcmFzYWtpX2NpdHkvMjAyNS8yMDI1MTIyNl8wMDE0Mwo=&L=ja"
+    }
 ];
 
 const POOL_AGENCIES = [
@@ -44,31 +104,36 @@ const MOCK_DATA = [
         title: "外務省IT広報システムの全体管理支援業務一式",
         category: "system",
         agency: "外務省",
-        date: formatDate(today)
+        date: formatDate(today),
+        url: "https://www.kkj.go.jp/d/?D=c2VhcmNoL3BfcG9ydGFsLzIwMjUvMTIvMjAyNTEyMjZfNTYxNTgK&L=ja"
     },
     {
         title: "入札公告（自家用電気工作物等保安管理業務）",
         category: "construction",
         agency: "国土交通省",
-        date: formatDate(today)
+        date: formatDate(today),
+        url: "https://www.kkj.go.jp/d/?D=eWFtYWd1Y2hpL3lhbWFndWNoaXViZV9pcnlvX2NlbnRlci8yMDI1LzIwMjUxMjI2XzAwMzgyCg==&L=ja"
     },
     {
         title: "新宿御苑コワーキングスペース管理運営事業者の公募について",
         category: "event",
         agency: "環境省",
-        date: formatDate(today)
+        date: formatDate(today),
+        url: "https://www.kkj.go.jp/d/?D=dG9reW8vZW52X2dhcmRlbl9zaGluanVrdWd5b2VuLzIwMjUvMjAyNTEyMjZfMDAwMTIK&L=ja"
     },
     {
         title: "令和8年度大阪市発達障がい児等特別支援教育相談事業委託",
         category: "tourism",
         agency: "大阪市",
-        date: formatDate(new Date(today.getTime() - 24 * 60 * 60 * 1000))
+        date: formatDate(new Date(today.getTime() - 24 * 60 * 60 * 1000)),
+        url: "https://www.kkj.go.jp/d/?D=b3Nha2Evb3Nha2FfY2l0eS8yMDI1LzIwMjUxMjI2XzAwOTQxCg==&L=ja"
     },
     {
-        title: "【県立病院課】山形県立病院総合医療情報システムに係るプリンター等（中央病院・新庄病院）",
+        title: "【県立病院課】山形県立病院総合医療情報システムに係る運用・保守及びクラウドサービス提供業務",
         category: "system",
         agency: "山形県",
-        date: formatDate(new Date(today.getTime() - 48 * 60 * 60 * 1000))
+        date: formatDate(new Date(today.getTime() - 48 * 60 * 60 * 1000)),
+        url: "https://www.kkj.go.jp/d/?D=dG9reW8vcmlueWFfbWFmZl9nby8yMDI1LzIwMjUxMjI2XzAwMDE4Cg==&L=ja"
     }
 ];
 
@@ -156,9 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
         div.dataset.title = item.title; // 重複チェック用
 
         // リンク先URLの生成
-        // タイトルそのものをキーワードとして検索させる（ピンポイント検索）
-        // ti=タイトル で検索することで、その案件だけをヒットさせる狙い
-        const searchUrl = `https://www.kkj.go.jp/s/?X=検索&ti=${encodeURIComponent(item.title)}`;
+        // item.url（直接リンク）がある場合はそれを使用する
+        // ない場合はタイトル検索リンク（ピンポイント検索）を使用する
+        const searchUrl = item.url ? item.url : `https://www.kkj.go.jp/s/?X=検索&ti=${encodeURIComponent(item.title)}`;
 
         div.innerHTML = `
             <div class="bid-header">
@@ -199,7 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
             title: selectedItem.title,
             category: selectedItem.category,
             agency: POOL_AGENCIES[Math.floor(Math.random() * POOL_AGENCIES.length)],
-            date: formatDate(today)
+            date: formatDate(today),
+            url: selectedItem.url
         };
 
         // 配列の先頭に追加
