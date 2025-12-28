@@ -14,6 +14,15 @@
 </head>
 
 <body>
+    <!-- Initial Overlay -->
+    <div id="initial-overlay" class="overlay">
+        <button id="start-btn" class="start-btn">最新の入札情報を<br>取得して始める</button>
+        <div id="loading-container" class="loading-container">
+            <div class="spinner"></div>
+            <div class="loading-text">最新情報を取得中...</div>
+        </div>
+    </div>
+
     <header class="site-header">
         <div class="container">
             <h1>新規入札情報 AIエージェント</h1>
@@ -25,16 +34,15 @@
         <div class="controls">
             <div class="category-tabs">
                 <button class="tab active" data-category="all">すべて</button>
-                <button class="tab" data-category="system">IT・デジタル</button>
+                <button class="tab" data-category="digital">デジタル</button>
                 <button class="tab" data-category="tourism">観光</button>
-                <button class="tab" data-category="event">イベント</button>
-                <button class="tab" data-category="pr">広報</button>
+                <button class="tab" data-category="education">教育</button>
+                <button class="tab" data-category="agriculture">農業</button>
                 <button class="tab" data-category="construction">工事</button>
+                <button class="tab" data-category="service">サービス</button>
                 <button class="tab" data-category="other">その他</button>
             </div>
-            <div class="status-indicator">
-                <span class="live-dot"></span> 自動更新中
-            </div>
+            <!-- Status indicator removed -->
         </div>
 
         <div class="feed-container">
@@ -50,6 +58,7 @@
         </div>
     </footer>
 
+    <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
 
