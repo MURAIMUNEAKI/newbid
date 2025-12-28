@@ -1,7 +1,8 @@
 :root {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
-    --bg-color: #f8fafc;
+    --bg-color: #fefce8;
+    /* Light yellow background */
     --card-bg: #ffffff;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
@@ -31,17 +32,56 @@ body {
 
 /* Header */
 .site-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    background: #111827;
+    /* Dark background for contrast */
     color: white;
-    padding: 2rem 0;
+    padding: 3rem 0;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Abstract background shapes for 'cool' look */
+.site-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.site-header::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.site-header .container {
+    position: relative;
+    z-index: 1;
 }
 
 .site-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.025em;
+    background: linear-gradient(to right, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 10px rgba(96, 165, 250, 0.3);
 }
 
 .site-header p {
@@ -108,9 +148,11 @@ body {
     0% {
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
     }
+
     70% {
         box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
     }
+
     100% {
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
     }
@@ -180,6 +222,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
