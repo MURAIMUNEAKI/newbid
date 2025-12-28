@@ -7,67 +7,61 @@ yesterday.setDate(yesterday.getDate() - 1);
 const dayBeforeYesterday = new Date(today);
 dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
 
-// モックデータ: 参照サイトの検索結果をシミュレート (日付は動的に設定)
+// モックデータ: 実在する案件データを使用 (ピンポイント検索を成功させるため)
 const MOCK_DATA = [
     {
-        title: "令和6年度 動画コンテンツ制作業務の委託",
-        category: "video",
-        agency: "東京都",
-        date: formatDate(today),
-        url: "https://www.kkj.go.jp/s/?X=検索&ti=動画コンテンツ制作業務の委託"
-    },
-    {
-        title: "AIチャットボット導入に係るシステム構築業務",
-        category: "ai",
-        agency: "経済産業省",
-        date: formatDate(today),
-        url: "https://www.kkj.go.jp/s/?X=検索&ti=AIチャットボット導入に係るシステム構築業務"
-    },
-    {
-        title: "庁内ネットワーク機器の更新及び保守業務",
-        category: "network",
-        agency: "大阪府",
-        date: formatDate(yesterday),
-        url: "https://www.kkj.go.jp/s/?X=検索&ti=庁内ネットワーク機器の更新及び保守業務"
-    },
-    {
-        title: "次世代Webサイトリニューアル事業",
-        category: "web",
-        agency: "文部科学省",
-        date: formatDate(yesterday),
-        url: "https://www.kkj.go.jp/s/?X=検索&ti=次世代Webサイトリニューアル事業"
-    },
-    {
-        title: "DX推進に向けた業務システム開発",
+        title: "令和8年度流通木材の合法性確認システムに係る運用・保守及びクラウドサービス提供業務",
         category: "system",
-        agency: "横浜市",
-        date: formatDate(yesterday),
-        url: "https://www.kkj.go.jp/s/?X=検索&ti=DX推進に向けた業務システム開発"
+        agency: "林野庁",
+        date: formatDate(today)
     },
     {
-        title: "地域観光資源を活用したインバウンド誘致事業",
+        title: "令和8年度国有林野地理情報高度化システム運用・保守業務",
+        category: "web",
+        agency: "林野庁",
+        date: formatDate(today)
+    },
+    {
+        title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務",
+        category: "tourism",
+        agency: "林野庁",
+        date: formatDate(today)
+    },
+    {
+        title: "観光地域づくり法人（DMO）等に対する観光地経営改善等の支援業務",
         category: "tourism",
         agency: "観光庁",
-        date: formatDate(today),
-        url: "https://www.kkj.go.jp/s/?X=検索&ti=地域観光資源を活用したインバウンド誘致事業"
+        date: formatDate(yesterday)
+    },
+    {
+        title: "映像コンテンツを活用した観光プロモーション事業",
+        category: "video",
+        agency: "地方自治体",
+        date: formatDate(yesterday)
     }
 ];
 
-// 新しい案件をランダム生成するためのデータプール
+// 新しい案件生成用プール (実在しそうな名称パターンを使用 - 拡大版)
 const POOL_TITLES = [
-    "プロモーション動画制作",
-    "クラウド基盤構築および移行支援",
-    "ホームページアクセシビリティ対応",
-    "生成AI活用実証実験業務",
-    "セキュリティ診断および対策業務",
-    "基幹システム改修業務",
-    "SNS運用代行および分析業務",
-    "観光プロモーション等の企画・運営業務",
-    "観光マーケティング調査業務"
+    "令和8年1月14日 一般競争入札予定【電子メール入札】(委託：韮崎市立小学校給食調理業務委託）",
+    "院内清掃業務委託一式",
+    "放射線量測定検査業務委託契約",
+    "医療材料等物品管理業務委託 一式",
+    "令和8年度流通木材の合法性確認システムに係る運用・保守及びクラウドサービス提供業務",
+    "令和8年度国有林野地理情報高度化システム運用・保守業務",
+    "令和8年度版「森林へようこそ」の印刷製造・発送支援業務",
+    "新宿御苑コワーキングスペース管理運営事業者の公募について",
+    "一般競争入札公告（政府調達）（総合評価落札方式）（次期会計システム構築に関する要件定義等及び調達支援業務）",
+    "（一般競争入札公告）入退室管理(顔認証・ICカード装置)及び監視カメラ装置工事（健都）",
+    "ICGC-ARGOからの転送データに関わるデータ保管用データカートリッジ 一式",
+    "CT映像およびアンギオハイブリット手術室を用いた医療機器の性能および安全性試験(2回目） 一式",
+    "Taurocholic acid 3-sulfate 一式",
+    "シングルセル用ライブラリー作製試薬 一式",
+    "病院棟1階薬剤部什器 一式"
 ];
 
-const POOL_AGENCIES = ["国土交通省", "環境省", "渋谷区", "福岡市", "防衛省", "デジタル庁", "観光庁"];
-const POOL_CATEGORIES = ["web", "system", "ai", "network", "video", "tourism"];
+const POOL_AGENCIES = ["林野庁", "観光庁", "国土交通省", "デジタル庁", "環境省", "厚生労働省"];
+const POOL_CATEGORIES = ["system", "web", "tourism", "video", "network", "ai"];
 
 document.addEventListener('DOMContentLoaded', () => {
     const listContainer = document.getElementById('bid-list');
@@ -100,10 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 「常に出る」をシミュレートする自動更新機能 (5秒ごとに新しい案件を追加)
+    // 「常に出る」をシミュレートする自動更新機能 (更新間隔を8秒に緩和)
     setInterval(() => {
         addNewItem();
-    }, 5000);
+    }, 8000);
 
     function filterAndRender(category) {
         // 現在のDOMにあるアイテムを取得してフィルタリングするのは複雑になるため、
@@ -136,13 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const li = document.createElement('li');
         li.className = 'bid-item';
         li.dataset.category = item.category; // フィルタリング用
+        li.dataset.title = item.title; // 重複チェック用
 
         // カテゴリラベルの表示名変換
         const catLabel = getCategoryLabel(item.category);
 
-        // リンク先の生成: 個別タイトルではなく、カテゴリ全体の検索結果に飛ばすことで「見つかりません」を防ぐ
-        // もしitem.urlが指定されていればそれを使うが、今回は動的に上書きするポリシーに変更
-        const searchUrl = CATEGORY_SEARCH_URLS[item.category] || 'https://www.kkj.go.jp/s/';
+        // 対策: 案件名(ti)でのピンポイント検索URLを生成
+        // 官公需ポータルサイトの仕様に合わせてパラメータを設定
+        const searchUrl = `https://www.kkj.go.jp/s/?X=検索&ti=${encodeURIComponent(item.title)}`;
 
         li.innerHTML = `
             <a href="${searchUrl}" class="bid-title" target="_blank">${item.title}</a>
@@ -150,25 +145,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="meta-item"><span class="tag">${catLabel}</span></span>
                 <span class="meta-item">🏢 ${item.agency}</span>
                 <span class="meta-item">📅 ${item.date}</span>
-                <span class="meta-item" style="font-size: 0.8em; color: #94a3b8;">🔗 関連公募を検索 -></span>
+                <span class="meta-item" style="font-size: 0.8em; color: #94a3b8;">🔍 ピンポイント検索</span>
             </div>
         `;
         return li;
     }
 
     function addNewItem() {
-        // ランダムな新しい案件を作成
-        const randomTitle = POOL_TITLES[Math.floor(Math.random() * POOL_TITLES.length)];
+        // 現在表示されているタイトルのリストを取得（重複チェック用）
+        const existingTitles = Array.from(document.querySelectorAll('.bid-item')).map(el => el.dataset.title);
+
+        // 重複しないタイトルが見つかるまで試行（最大5回）
+        let randomTitle = null;
+        for (let i = 0; i < 5; i++) {
+            const candidate = POOL_TITLES[Math.floor(Math.random() * POOL_TITLES.length)];
+            if (!existingTitles.includes(candidate)) {
+                randomTitle = candidate;
+                break;
+            }
+        }
+
+        // 重複しないものが見つからなかった場合は今回は追加を見送る
+        if (!randomTitle) return;
+
         const randomAgency = POOL_AGENCIES[Math.floor(Math.random() * POOL_AGENCIES.length)];
         const randomCategory = POOL_CATEGORIES[Math.floor(Math.random() * POOL_CATEGORIES.length)];
         const today = new Date().toISOString().split('T')[0];
 
         const newItem = {
-            title: `【新着】${randomTitle}`,
+            title: randomTitle,
             category: randomCategory,
             agency: randomAgency,
-            date: today,
-            // url: URLはcreateBidItem内でカテゴリに基づいて生成されるため省略可
+            date: today
         };
 
         const el = createBidItem(newItem);
@@ -181,9 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
             el.style.display = 'none';
         }
 
-        // アニメーション効果 (CSS class contains animation)
+        // アニメーション効果を追加
+        el.animate([
+            { opacity: 0, transform: 'translateY(-20px)' },
+            { opacity: 1, transform: 'translateY(0)' }
+        ], {
+            duration: 500,
+            easing: 'ease-out'
+        });
 
-        // 項目が増えすぎないように古いものを削除 (オプション)
+        // 項目が増えすぎないように古いものを削除
         if (listContainer.children.length > 50) {
             listContainer.removeChild(listContainer.lastChild);
         }
