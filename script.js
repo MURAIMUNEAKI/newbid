@@ -1,164 +1,185 @@
-// 新しい案件生成用プール (タイトルとカテゴリを紐付け)
+const today = new Date();
+const formatDate = (date) => {
+    return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+};
+
+// 実在する案件データ（検索で確実にヒットするもの）
+// タイトルは「官公需ポータルサイト」の検索結果から取得
 const POOL_ITEMS = [
-    { title: "令和8年1月14日 一般競争入札予定【電子メール入札】(委託：韮崎市立小学校給食調理業務委託）", category: "other" },
-    { title: "院内清掃業務委託一式", category: "other" },
-    { title: "放射線量測定検査業務委託契約", category: "other" },
-    { title: "医療材料等物品管理業務委託 一式", category: "other" },
-    { title: "令和8年度流通木材の合法性確認システムに係る運用・保守及びクラウドサービス提供業務", category: "it" },
-    { title: "令和8年度国有林野地理情報高度化システム運用・保守業務", category: "it" },
+    // IT・デジタル (system)
+    { title: "【県立病院課】山形県立病院総合医療情報システムに係る運用・保守及びクラウドサービス提供業務", category: "system" },
+    { title: "令和8年度流通木材の合法性確認システムに係る運用・保守及びクラウドサービス提供業務", category: "system" },
+    { title: "外務省IT広報システムの全体管理支援業務一式", category: "system" },
+    { title: "令和8年度国有林野地理情報高度化システム運用・保守業務", category: "system" },
+
+    // 観光 (tourism)
+    { title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務", category: "tourism" },
+    { title: "令和8年度大阪市発達障がい児等特別支援教育相談事業委託", category: "tourism" },
+
+    // イベント (event)
+    { title: "新宿御苑コワーキングスペース管理運営事業者の公募について", category: "event" },
+
+    // 広報 (pr)
+    // 重複を許容してカテゴリを跨がせる
+    { title: "外務省IT広報システムの全体管理支援業務一式", category: "pr" },
     { title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務", category: "pr" },
-    { title: "新宿御苑コワーキングスペース管理運営事業者の公募について", category: "other" },
-    { title: "一般競争入札公告（政府調達）（総合評価落札方式）（次期会計システム構築に関する要件定義等及び調達支援業務）", category: "it" },
-    { title: "（一般競争入札公告）入退室管理(顔認証・ICカード装置)及び監視カメラ装置工事（健都）", category: "construction" },
-    { title: "ICGC-ARGOからの転送データに関わるデータ保管用データカートリッジ 一式", category: "it" },
-    { title: "CT映像およびアンギオハイブリット手術室を用いた医療機器の性能および安全性試験(2回目） 一式", category: "other" },
-    { title: "大阪・関西万博に向けたイベント企画・運営業務", category: "event" },
-    { title: "地域商店街活性化イベント実施支援業務", category: "event" },
-    { title: "市庁舎改修に伴う電気設備工事", category: "construction" },
-    { title: "観光地域づくり法人（DMO）等に対する観光地経営改善等の支援業務", category: "tourism" },
-    { title: "映像コンテンツを活用した観光プロモーション事業", category: "pr" }
+
+    // 工事 (construction)
+    { title: "一般競争入札の公告（令和8年度琵琶湖流域下水道湖南中部浄化センター都市ガス供給業務）", category: "construction" },
+    { title: "入札公告（自家用電気工作物等保安管理業務）", category: "construction" },
+
+    // その他 (other)
+    { title: "大容量長期保管用テープアーカイブストレージ 一式", category: "other" },
+    { title: "【河北病院】超音波診断装置（令和8年1月21日入札）", category: "other" },
+    { title: "令和8年1月14日 一般競争入札予定【電子メール入札】(委託：韮崎市立小学校給食調理業務委託）", category: "other" }
 ];
 
-const POOL_AGENCIES = ["林野庁", "観光庁", "国土交通省", "デジタル庁", "環境省", "厚生労働省", "韮崎市", "国立病院機構", "東京都", "大阪府"];
+const POOL_AGENCIES = [
+    "外務省", "林野庁", "文部科学省", "国土交通省", "東京都", "大阪市", "山形県", "滋賀県", "河北病院", "韮崎市"
+];
+
+// 初期表示用データ
+const MOCK_DATA = [
+    {
+        title: "外務省IT広報システムの全体管理支援業務一式",
+        category: "system",
+        agency: "外務省",
+        date: formatDate(today)
+    },
+    {
+        title: "入札公告（自家用電気工作物等保安管理業務）",
+        category: "construction",
+        agency: "国土交通省",
+        date: formatDate(today)
+    },
+    {
+        title: "新宿御苑コワーキングスペース管理運営事業者の公募について",
+        category: "event",
+        agency: "環境省",
+        date: formatDate(today)
+    },
+    {
+        title: "令和8年度大阪市発達障がい児等特別支援教育相談事業委託",
+        category: "tourism",
+        agency: "大阪市",
+        date: formatDate(new Date(today.getTime() - 24 * 60 * 60 * 1000))
+    },
+    {
+        title: "【県立病院課】山形県立病院総合医療情報システムに係るプリンター等（中央病院・新庄病院）",
+        category: "system",
+        agency: "山形県",
+        date: formatDate(new Date(today.getTime() - 48 * 60 * 60 * 1000))
+    }
+];
+
+// カテゴリIDと表示名のマッピング
+function getCategoryLabel(cat) {
+    const map = {
+        'system': 'IT・デジタル',
+        'tourism': '観光',
+        'event': 'イベント',
+        'pr': '広報',
+        'construction': '工事',
+        'other': 'その他'
+    };
+    return map[cat] || 'その他';
+}
+
+// 検索ボタン（カテゴリ全体）のリンク先 URL 設定
+// カテゴリごとに適切な検索キーワードを設定
+// 注意: 個別案件のリンクは title パラメータを使用するが、カテゴリ検索はキーワード検索(S)を使用
+const CATEGORY_SEARCH_URLS = {
+    'system': 'https://www.kkj.go.jp/s/?X=検索&S=IT%20システム',
+    'tourism': 'https://www.kkj.go.jp/s/?X=検索&S=観光',
+    'event': 'https://www.kkj.go.jp/s/?X=検索&S=イベント',
+    'pr': 'https://www.kkj.go.jp/s/?X=検索&S=広報',
+    'construction': 'https://www.kkj.go.jp/s/?X=検索&S=工事',
+    'other': 'https://www.kkj.go.jp/s/?X=検索&S=その他'
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 日付フォーマット関数 (YYYY-MM-DD)
-    const formatDate = (date) => date.toISOString().split('T')[0];
-
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    // モックデータ: 実在する案件データを使用
-    const MOCK_DATA = [
-        {
-            title: "令和8年度流通木材の合法性確認システムに係る運用・保守及びクラウドサービス提供業務",
-            category: "it",
-            agency: "林野庁",
-            date: formatDate(today)
-        },
-        {
-            title: "令和8年度国有林野地理情報高度化システム運用・保守業務",
-            category: "it",
-            agency: "林野庁",
-            date: formatDate(today)
-        },
-        {
-            title: "令和8年度版「森林へようこそ」の印刷製造・発送支援業務",
-            category: "pr",
-            agency: "林野庁",
-            date: formatDate(today)
-        },
-        {
-            title: "観光地域づくり法人（DMO）等に対する観光地経営改善等の支援業務",
-            category: "tourism",
-            agency: "観光庁",
-            date: formatDate(yesterday)
-        },
-        {
-            title: "大阪・関西万博に向けたイベント企画・運営業務",
-            category: "event",
-            agency: "経済産業省",
-            date: formatDate(yesterday)
-        },
-        {
-            title: "市庁舎改修に伴う電気設備工事",
-            category: "construction",
-            agency: "横浜市",
-            date: formatDate(yesterday)
-        }
-    ];
-
     const listContainer = document.getElementById('bid-list');
     const tabs = document.querySelectorAll('.tab');
-    let currentCategory = 'all';
+    const statusDot = document.querySelector('.status-dot');
 
-    // カテゴリごとの検索クエリ定義 (ヒットしやすいように調整)
-    const CATEGORY_SEARCH_URLS = {
-        'it': 'https://www.kkj.go.jp/s/?X=検索&ti=システム%20OR%20アプリ%20OR%20Web%20OR%20AI%20OR%20ネットワーク',
-        'tourism': 'https://www.kkj.go.jp/s/?X=検索&ti=観光%20OR%20インバウンド%20OR%20旅行',
-        'event': 'https://www.kkj.go.jp/s/?X=検索&ti=イベント%20OR%20展示会%20OR%20運営',
-        'pr': 'https://www.kkj.go.jp/s/?X=検索&ti=広報%20OR%20広告%20OR%20動画%20OR%20パンフレット',
-        'construction': 'https://www.kkj.go.jp/s/?X=検索&ti=工事%20OR%20建築%20OR%20改修%20OR%20設備',
-        'other': 'https://www.kkj.go.jp/s/?X=検索&ti=委託%20OR%20調達%20OR%20購入'
-    };
+    // データ管理用配列（初期データで初期化）
+    let currentItems = [...MOCK_DATA];
 
-    // 初期表示
-    renderList(MOCK_DATA);
+    // 初回レンダリング
+    renderList(currentItems);
 
-    // タブ切り替え機能
+    // タブ切り替え処理
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             // アクティブクラスの切り替え
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
 
-            // カテゴリフィルタリング
-            currentCategory = tab.dataset.category;
-            filterAndRender(currentCategory);
+            // フィルタリングと再レンダリング
+            const category = tab.dataset.category;
+            filterAndRender(category);
         });
     });
 
-    // 「常に出る」をシミュレートする自動更新機能 (更新間隔を8秒に緩和)
-    setInterval(() => {
-        addNewItem();
-    }, 8000);
-
-    function filterAndRender(category) {
-        const items = document.querySelectorAll('.bid-item');
-        items.forEach(item => {
-            const itemCat = item.dataset.category;
-            if (category === 'all' || itemCat === category) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-
-    function renderList(data) {
+    // リストのレンダリング関数
+    function renderList(items) {
         listContainer.innerHTML = '';
-        data.forEach(item => {
-            const el = createBidItem(item);
-            listContainer.appendChild(el);
+        if (items.length === 0) {
+            listContainer.innerHTML = '<div style="text-align:center; padding: 2rem; color: #666;">該当する案件はありません</div>';
+            return;
+        }
+
+        // 日付の降順でソート
+        const sortedItems = [...items].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        sortedItems.forEach(item => {
+            const itemElement = createBidItem(item);
+            listContainer.appendChild(itemElement);
         });
     }
 
-    function createBidItem(item) {
-        const li = document.createElement('li');
-        li.className = 'bid-item';
-        li.dataset.category = item.category; // フィルタリング用
-        li.dataset.title = item.title; // 重複チェック用
-
-        // カテゴリラベルの表示名変換
-        const catLabel = getCategoryLabel(item.category);
-
-        // 対策: 検索ヒット率向上のため、記号を除去し「件名(ti)」ではなく「キーワード(S)」検索を使用
-        // (厳密なタイトル一致だと、少しの違いで0件になるため)
-        const sanitizedTitle = item.title
-            .replace(/[【】（）「」()\[\]]/g, ' ') // 記号をスペースに置換
-            .replace(/\s+/g, ' ')             // 連続するスペースを詰める
-            .trim();
-
-        const searchUrl = `https://www.kkj.go.jp/s/?X=検索&S=${encodeURIComponent(sanitizedTitle)}`;
-
-        li.innerHTML = `
-            <a href="${searchUrl}" class="bid-title" target="_blank">${item.title}</a>
-            <div class="bid-meta">
-                <span class="meta-item"><span class="tag">${catLabel}</span></span>
-                <span class="meta-item">🏢 ${item.agency}</span>
-                <span class="meta-item">📅 ${item.date}</span>
-                <span class="meta-item" style="font-size: 0.8em; color: #94a3b8;">🔍 ピンポイント検索</span>
-            </div>
-        `;
-        return li;
+    // フィルタリング関数
+    function filterAndRender(category) {
+        if (category === 'all') {
+            renderList(currentItems);
+        } else {
+            const filtered = currentItems.filter(item => item.category === category);
+            renderList(filtered);
+        }
     }
 
-    function addNewItem() {
-        // 現在表示されているタイトルのリストを取得（重複チェック用）
-        const existingTitles = Array.from(document.querySelectorAll('.bid-item')).map(el => el.dataset.title);
+    // 個別の案件要素を作成する関数
+    function createBidItem(item) {
+        const div = document.createElement('div');
+        div.className = 'bid-item';
+        div.dataset.category = item.category;
+        div.dataset.title = item.title; // 重複チェック用
 
-        // 重複しないタイトルが見つかるまで試行
+        // リンク先URLの生成
+        // タイトルそのものをキーワードとして検索させる（ピンポイント検索）
+        // ti=タイトル で検索することで、その案件だけをヒットさせる狙い
+        const searchUrl = `https://www.kkj.go.jp/s/?X=検索&ti=${encodeURIComponent(item.title)}`;
+
+        div.innerHTML = `
+            <div class="bid-header">
+                <span class="bid-category cat-${item.category}">${getCategoryLabel(item.category)}</span>
+                <span class="bid-date">${item.date}</span>
+            </div>
+            <a href="${searchUrl}" target="_blank" class="bid-title" rel="noopener noreferrer">
+                ${item.title}
+                <span class="external-link-icon">↗</span>
+            </a>
+            <div class="bid-agency">発注機関: ${item.agency}</div>
+        `;
+        return div;
+    }
+
+    // 定期的に新しい案件を追加する処理（ライブ更新のシミュレーション）
+    function addNewItem() {
+        // 現在表示されている（重複チェック用）タイトルのリスト
+        const existingTitles = currentItems.map(i => i.title);
+
+        // 重複しないアイテムをプールから探す（最大試行5回）
         let selectedItem = null;
         for (let i = 0; i < 5; i++) {
             const candidate = POOL_ITEMS[Math.floor(Math.random() * POOL_ITEMS.length)];
@@ -168,54 +189,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 重複しないものが見つからなかった場合は今回は追加を見送る
-        if (!selectedItem) return;
-
-        // 代理店はランダムのまま
-        const randomAgency = POOL_AGENCIES[Math.floor(Math.random() * POOL_AGENCIES.length)];
-        const today = new Date().toISOString().split('T')[0];
+        // 全て表示済みなどで候補がない場合はスキップ
+        if (!selectedItem) {
+            console.log("No new unique items to add.");
+            return; // 追加なし
+        }
 
         const newItem = {
             title: selectedItem.title,
-            category: selectedItem.category, // 固定された正しいカテゴリを使用
-            agency: randomAgency,
-            date: today
+            category: selectedItem.category,
+            agency: POOL_AGENCIES[Math.floor(Math.random() * POOL_AGENCIES.length)],
+            date: formatDate(today)
         };
 
-        const el = createBidItem(newItem);
+        // 配列の先頭に追加
+        currentItems.unshift(newItem);
 
-        // リストの先頭に追加
-        listContainer.insertBefore(el, listContainer.firstChild);
-
-        // 現在のフィルタ条件に合わなければ隠す
-        if (currentCategory !== 'all' && currentCategory !== newItem.category) {
-            el.style.display = 'none';
+        // リストが長くなりすぎたら古いものを削除（50件上限）
+        if (currentItems.length > 50) {
+            currentItems.pop();
         }
 
-        // アニメーション効果を追加
-        el.animate([
-            { opacity: 0, transform: 'translateY(-20px)' },
-            { opacity: 1, transform: 'translateY(0)' }
-        ], {
-            duration: 500,
-            easing: 'ease-out'
-        });
+        // 現在のアクティブカテゴリに合わせて表示更新
+        const activeTab = document.querySelector('.tab.active');
+        const activeCategory = activeTab ? activeTab.dataset.category : 'all';
 
-        // 項目が増えすぎないように古いものを削除
-        if (listContainer.children.length > 50) {
-            listContainer.removeChild(listContainer.lastChild);
-        }
+        filterAndRender(activeCategory);
+
+        // ステータスインジケーターを点滅更新
+        statusDot.style.animation = 'none';
+        statusDot.offsetHeight; /* trigger reflow */
+        statusDot.style.animation = 'pulse 2s infinite';
     }
 
-    function getCategoryLabel(cat) {
-        const map = {
-            'it': 'IT・デジタル',
-            'tourism': '観光',
-            'event': 'イベント',
-            'pr': '広報',
-            'construction': '工事',
-            'other': 'その他'
-        };
-        return map[cat] || 'その他';
-    }
+    // 8秒ごとに新しい案件を追加
+    setInterval(addNewItem, 8000);
 });
